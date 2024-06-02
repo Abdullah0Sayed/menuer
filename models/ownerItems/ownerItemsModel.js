@@ -25,6 +25,11 @@ const ownerItemsMongooseSchema = new mongoose.Schema({
     item_id: {
         type: mongoose.Schema.ObjectId,
         ref: 'Items'
+    },
+    business_id: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Business',
+        required: true
     }
 
 } , {timestamps: true});

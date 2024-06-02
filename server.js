@@ -22,6 +22,7 @@ const homeRoute = require("./routes/dashboard/home/homeRoute");
 const menuMangerRoute = require("./routes/dashboard/menuManger/menuMangerRoute");
 const businessMangerRoute = require("./routes/dashboard/businessManger/businessMangerRoute");
 const reviewRoute = require("./routes/reviews/reviewRoute");
+const cashSystemRoute = require("./routes/dashboard/cashSystem/cashSystemRoute");
 const ErrorApi = require("./utils/Errors/errorAPI");
 const centerErrorMiddleware = require("./middlewares/globalError");
 
@@ -75,6 +76,8 @@ app.use('',menuMangerRoute)
 app.use('',businessMangerRoute)
 // mount business route 
 app.use('',businessRoute);
+// mount CashSystem route 
+app.use('',cashSystemRoute);
 // review
 app.use('',reviewRoute)
 

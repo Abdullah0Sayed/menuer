@@ -76,6 +76,8 @@ exports.authenticatedRoute = asyncHandler(
 
         req.user = loggedUser;
         console.log(`Logged User ID : ${loggedUser._id}`);
+
+        
         const staff = await staffModel.findOne({user_id: loggedUser._id});
         if(staff) {
             req.staffInfo = staff;

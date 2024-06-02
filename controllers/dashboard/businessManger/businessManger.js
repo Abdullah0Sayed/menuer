@@ -178,7 +178,7 @@ exports.addNewStaffMember = asyncHandler(
         const new_staff = await staffModel.create(newStaffMemberObject);
         user.role = 'stuff';
         await user.save()
-        res.status(201).json({new_staff})
+        res.status(201).json({data: new_staff , status: 'success' ,msg: 'user not found'})
     }
 )
 

@@ -5,12 +5,12 @@ const mongoose = require("mongoose");
 const shiftSchema = new mongoose.Schema({
     active: {
         type: Boolean,
-        require: true
+        required: true
     },
     startedAt: {
         type: Date,
         required: true,
-        default: Date.now
+        default: Date.now()
     },
     endedAt: {
         type: Date
@@ -30,6 +30,11 @@ const shiftSchema = new mongoose.Schema({
     stuff_id: {
         type: mongoose.Schema.ObjectId,
         ref: 'Staff'
+    },
+    business_id: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Business',
+        required: true
     }
     } , {timestamps: true});
     

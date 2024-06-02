@@ -45,14 +45,26 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    customer_id: {
+    discount : {
+        type: Number,
+        default: 0
+    },
+    total_order_after_discount: {
+        type: Number
+    },
+    client_id: {
         type: mongoose.Schema.ObjectId,
-        ref: 'User',
+        ref: 'Client',
         required: true
     },
     shift_id: {
         type: mongoose.Schema.ObjectId,
         ref: 'Shift'
+    },
+    business_id: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Business',
+        required: true
     }
 
     

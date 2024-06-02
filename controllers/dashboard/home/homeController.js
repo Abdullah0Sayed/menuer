@@ -5,40 +5,46 @@ const businessModel = require("../../../models/business/BusinessModel");
 const sectionsModel = require("../../../models/sections/sectionModel");
 // import ownerItemsModel
 const ownerItemsModel = require("../../../models/ownerItems/ownerItemsModel");
-
 // import Error Api 
 const ErrorApi = require("../../../utils/Errors/errorAPI");
 
 exports.getBusinessData = asyncHandler(
     async (req,res,next)=> {
         // get user id from protected route
-        const id = req.user._id
+        let id;
+        let business_id;
+        let business;
+
         console.log(id);
-        const business = await businessModel.find({user_id: id});
-        // fetch business id after get business model 
-        const business_id = business[0]._id;
-        // console.log(`Business ID : ${business_id}`);
-        // get sections related with business 
+
+        if(req.staffInfo) {
+            business_id = req.staffInfo.business_id;
+            business = await businessModel.findById(business_id);
+            
+        }
+        else {
+            id = req.user._id
+            business = await businessModel.findOne({user_id: id});
+        }
+        
+        if(!business) {
+            return next(new ErrorApi(`No Business Created To This User - Create Business Now` , 404));
+        }
+
         const sections = await sectionsModel.find({business_id}).select('section_name').sort('section_name')
-        // get items for each sections 
-         // get section id 
-         
-         // get items 
- 
+
 
          const items = await ownerItemsModel.find({
             section_id: { $exists: true, $in: sections }
           });
           
-        if(!business) {
-            return next(new ErrorApi(`No Business Created To This User - Create Business Now`));
-        }
+       
 
         if(!sections || sections.length == 0) {
             console.log(`No Sections Created`);
         }
         
-        res.status(200).json({business , sections , items})
+        res.status(200).json({business , sections , items , status: 'success'})
     }
 )
 

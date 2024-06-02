@@ -29,8 +29,8 @@ exports.getMenuSections = asyncHandler(
         }
         
          // fetch business id after get business model 
-        if(req.body.business_id) {
-            business_id = req.body.business_id
+        if(req.business) {
+            business_id = req.business._id
         }else {
             business_id = business[0]._id;
         }
