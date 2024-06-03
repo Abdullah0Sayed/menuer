@@ -13,25 +13,25 @@ const router = express.Router();
 
 // start new shift
 
-router.route('/menuer/business/cashsystem/startShift').post(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , startNewShift);
+router.route('/menuer/business/dashboard/cashsystem/startShift').post(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , startNewShift);
 
 // end current shift
 
-router.route('/menuer/business/cashsystem/endShift').put(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , endShift);
+router.route('/menuer/business/dashboard/cashsystem/endShift').put(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , endShift);
 
 // get shift data 
 
-router.route('/menuer/business/cashsystem/shift').get(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , getShiftID , getShift);
+router.route('/menuer/business/dashboard/cashsystem/shift').get(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , getShiftID , getShift);
 
 // get items order
 
-router.route('/menuer/business/cashsystem/new-order').get(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , getShiftID , getItemID);
+router.route('/menuer/business/dashboard/cashsystem/new-order').get(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , getShiftID , getItemID);
 // create new order
 
-router.route('/menuer/business/cashsystem/new-order').post(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , getShiftID , addNewOrder);
+router.route('/menuer/business/dashboard/cashsystem/new-order').post(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , getShiftID , addNewOrder);
 // create new order
 
-router.route('/menuer/business/cashsystem/add-client').post(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , getShiftID , addNewClient);
+router.route('/menuer/business/dashboard/cashsystem/add-client').post(authenticatedRoute , allowedTo("stuff" , "owner") , allowedPages("2") , getShiftID , addNewClient);
 
 
 // exports router 

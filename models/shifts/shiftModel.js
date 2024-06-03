@@ -27,6 +27,11 @@ const shiftSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    transactions: {
+        type: Number,
+        default: 0
+    }
+    ,
     stuff_id: {
         type: mongoose.Schema.ObjectId,
         ref: 'Staff'
@@ -39,9 +44,23 @@ const shiftSchema = new mongoose.Schema({
     } , {timestamps: true});
     
     
+    
+    // mongoose middleware
+
+    shiftSchema.pre(/^find/, function(next) {
+        this.populate('stuff_id business_id');
+        next();
+      });
+      
+
+
     // create a model for shift 
 
     const shiftModel = mongoose.model('Shift' , shiftSchema);
+
+
+
+
 
     // exports a shit model 
     

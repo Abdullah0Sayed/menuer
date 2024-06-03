@@ -7,6 +7,8 @@ const sectionsModel = require("../../../models/sections/sectionModel");
 const ErrorApi = require("../../../utils/Errors/errorAPI");
 // import ownerItems Model 
 const ownerItemsModel = require("../../../models/ownerItems/ownerItemsModel");
+// import staff Model 
+const staffModel = require("../../../models/staff/staffModel");
 // import collections model 
 const collectionModel = require("../../../models/collections/CollectionModel");
 // import items Model 
@@ -62,28 +64,38 @@ exports.getMenuCollectionsBasedOnCategoryId = asyncHandler(
     async(req,res,next)=>{
         // 1. get categoryID
         // get business id from user 
-        const user_id = req.user._id;
+        const id = (req.staffInfo)? req.staffInfo._id: req.user._id;
         let business_id;
-        console.log(user_id);
-        const business = await businessModel.find({user_id});
+        let business
+        console.log(id);
+
+        if(req.staffInfo) {
+            staff = await staffModel.findById(id);
+            business_id = staff.business_id;
+            business = await businessModel.findById(business_id);
+            console.log(business);
+        }
+        else {
+            business_id = req.business._id
+            business = await businessModel.findById(business_id);
+         }
+        
         if(!business) {
             return next(new ErrorApi(`No Business Created To This User - Create Business Now`));
         }
          // fetch business id after get business model 
-         if(req.body.business_id) {
-            business_id = req.body.business_id
-         }else {
-            business_id = business[0]._id;
-         }
+        
         
          // get sections related with business 
          const sections = await sectionsModel.find({business_id}).populate({path: 'section_items'});
 
          // fetch business id after get business model 
-        const category_id_array = business[0].categories_id;
+         
+        const category_id_array = business.categories_id;
         const collections = await collectionModel.find({category_id: {$exists: true , $in: category_id_array}}).select('collection_name')
         const items = await itemsModel.find({category_id: {$exists: true , $in: category_id_array}}).populate('collection_id').select('-item_variants -item_keywords -price -category_id')
         res.status(200).json({collections , items , sections})
+        
         // get category id related with business 
 
     }
@@ -93,14 +105,26 @@ exports.getMenuCollectionsBasedOnCategoryId = asyncHandler(
 exports.addMenuSectionAndItems = asyncHandler(
     async (req,res,next)=>{
        // get business id from user 
-       const user_id = req.user._id;
-       console.log(user_id);
-       const business = await businessModel.find({user_id});
+       const id = (req.staffInfo)? req.staffInfo._id: req.user._id;
+        let business_id;
+        let business;
+
+        if(req.staffInfo) {
+            staff = await staffModel.findById(id);
+            business_id = staff.business_id;
+            business = await businessModel.findById(business_id);
+            console.log(business);
+        }
+        else {
+            business_id = req.business._id
+            business = await businessModel.findById(business_id);
+         }
+
        if(!business) {
            return next(new ErrorApi(`No Business Created To This User - Create Business Now`));
        }
         // fetch business id after get business model 
-        const business_id = business[0]._id;
+       
 
 
         // check if find section_name
@@ -121,7 +145,8 @@ exports.addMenuSectionAndItems = asyncHandler(
                 description: req.body.description,
                 price: req.body.price,
                 item_variants: {...req.body.item_variants},
-                item_id: req.body.item_id
+                item_id: req.body.item_id,
+                business_id: business_id
             }
             const new_owner_item = await ownerItemsModel.create(owner_item_object);
             const secDoc = await sectionsModel.findById(owner_item_object.section_id);

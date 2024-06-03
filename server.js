@@ -22,6 +22,7 @@ const homeRoute = require("./routes/dashboard/home/homeRoute");
 const menuMangerRoute = require("./routes/dashboard/menuManger/menuMangerRoute");
 const businessMangerRoute = require("./routes/dashboard/businessManger/businessMangerRoute");
 const reviewRoute = require("./routes/reviews/reviewRoute");
+const reportsRoute = require("./routes/dashboard/reports/reportsRoute");
 const cashSystemRoute = require("./routes/dashboard/cashSystem/cashSystemRoute");
 const ErrorApi = require("./utils/Errors/errorAPI");
 const centerErrorMiddleware = require("./middlewares/globalError");
@@ -80,6 +81,8 @@ app.use('',businessRoute);
 app.use('',cashSystemRoute);
 // review
 app.use('',reviewRoute)
+// reports
+app.use('',reportsRoute)
 
 
 // handle error for unhandled routes 

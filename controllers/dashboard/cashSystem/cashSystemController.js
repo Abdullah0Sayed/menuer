@@ -170,6 +170,11 @@ exports.addNewOrder = asyncHandler(
         };
 
         const newOrder = await orderModel.create(new_order_object);
+        
+        // get shift 
+        const currentShift = await shiftModel.findById(req.shiftData._id);
+        currentShift.transactions += 1;
+        await currentShift.save()
         // response 
         res.status(201).json({data: newOrder , status: 'success'});
     }

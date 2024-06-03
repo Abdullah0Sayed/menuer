@@ -10,8 +10,8 @@ const router = express.Router();
 // get business of user 
 
 
-router.route('/dashboard/home/').get(authenticatedRoute,allowedTo("stuff","owner"),getBusinessData);
-router.route('/dashboard/home/:sectionId').get(authenticatedRoute,allowedTo("stuff","owner"),getItemsOfSection);
+router.route('/menuer/business/dashboard/home/').get(authenticatedRoute,allowedTo("stuff","owner"),getBusinessData);
+router.route('/menuer/business/dashboard/home/:sectionId').get(authenticatedRoute,allowedTo("stuff","owner"),getItemsOfSection);
 // router.route('/dashboard/menu-item/:id').get(authenticatedRoute,allowedTo("stuff","owner"),getMenuItem);
 
 
