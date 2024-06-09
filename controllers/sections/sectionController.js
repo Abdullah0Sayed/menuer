@@ -14,7 +14,7 @@ const businessModel = require("../../models/business/BusinessModel");
 
 exports.createSection = asyncHandler(
     async (req,res,next)=>{
-       
+        req.body.business_id = req.business._id; 
         const new_section = await sectionModel.create(req.body);
         res.status(201).json(new_section)
         // console.log(`User Id From Section Creation ${user_id}`);

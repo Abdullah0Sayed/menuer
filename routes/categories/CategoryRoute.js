@@ -8,8 +8,8 @@ const {getAllUsers} = require("../../controllers/users/userController");
 
 
 router.use('/categories/:categoryID/user' , getAllUsers)
-router.route("/").post(authenticatedRoute,allowedTo("admin","owner"),uploadCategoryImage,resizeImage,addCategoryValidation , addNewCategory);
+router.route("/").post(uploadCategoryImage,resizeImage,addCategoryValidation , addNewCategory);
 
-router.route("/menus/business/categories").get(authenticatedRoute,allowedTo("admin","owner"),getCategories);
+router.route("/menus/business/categories").get(authenticatedRoute,getCategories);
 router.route("/categories/:id").get(authenticatedRoute,allowedTo("admin","owner"),getCategoryValidation , getCategory).put(authenticatedRoute,allowedTo("admin","owner"),uploadCategoryImage,resizeImage,updatedCategoryValidation, updateCategory).delete(authenticatedRoute,allowedTo("admin","owner"),deleteCategoryValidation , deleteCategory)
 module.exports = router;

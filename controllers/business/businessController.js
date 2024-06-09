@@ -43,7 +43,7 @@ exports.resizeUploadBusinessImages = asyncHandler(
         console.log(`Files`);
         // console.log(req.files);
         
-       
+        if(req.files) {
             if(req.files.business_cover) {
                 const cover_file_name = `bsCover-${uuidv4()}-${Date.now()}.png`;
     
@@ -58,6 +58,8 @@ exports.resizeUploadBusinessImages = asyncHandler(
                 req.body.business_logo = logo_file_name
                 
             }
+        }
+           
 
         
         next();
@@ -70,7 +72,7 @@ exports.resizeUploadBusinessImages = asyncHandler(
 // @route POST /business/create/
 // @access private
 exports.createBusiness = asyncHandler(
-    async (req, res) => {
+    async (req, res , next) => {
         req.body.user_id = req.user._id;
         const newDoc = await businessModel.create(req.body);
         // get user 

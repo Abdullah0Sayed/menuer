@@ -7,10 +7,14 @@ const dotenv =  require("dotenv");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const cors = require('cors');
+
 // user-defined Module
 const dbConnection = require('./config/databaseConnection');
+const ErrorApi = require("./utils/Errors/errorAPI");
+const centerErrorMiddleware = require("./middlewares/globalError");
+
+// menuer-business-version Routes
 const authRoute = require("./routes/auth/authRoute");
-// const loginRoute = require("./routes/login/userLoginRoute");
 const usersRoute = require("./routes/users/UserRoutes");
 const categoryRoute = require("./routes/categories/CategoryRoute");
 const businessRoute = require("./routes/business/businessRoutes");
@@ -24,9 +28,16 @@ const businessMangerRoute = require("./routes/dashboard/businessManger/businessM
 const reviewRoute = require("./routes/reviews/reviewRoute");
 const reportsRoute = require("./routes/dashboard/reports/reportsRoute");
 const cashSystemRoute = require("./routes/dashboard/cashSystem/cashSystemRoute");
-const ErrorApi = require("./utils/Errors/errorAPI");
-const centerErrorMiddleware = require("./middlewares/globalError");
+const qrcodeRoute = require("./routes/qrCodes/qrCodeRoute");
 
+
+
+// client Routes
+const clientAuthRoute = require("./routes/clients/auth/authRoute");
+const clientHomeRoute = require("./routes/clients/home/homeRoute");
+const clientBusinessRoute = require("./routes/clients/business/businessRoute");
+const itemsRoute = require("./routes/clients/items/itemsRoute");
+const wishlistRoute = require("./routes/clients/wishlist/wishlistRoute");
 
 
 
@@ -55,6 +66,7 @@ dbConnection();
 //Mount  routes / apis 
 // app.use('/categories',categoryRoute)
 app.use('/auth' , authRoute);
+app.use('/auth' , clientAuthRoute);
 // mount login route 
 // app.use('/', loginRoute);
 // mount users route 
@@ -83,7 +95,15 @@ app.use('',cashSystemRoute);
 app.use('',reviewRoute)
 // reports
 app.use('',reportsRoute)
+// qrcodes
+app.use('',qrcodeRoute)
 
+
+// clients route mount 
+app.use('' , clientHomeRoute)
+app.use('' , clientBusinessRoute)
+app.use('' , itemsRoute)
+app.use('' , wishlistRoute)
 
 // handle error for unhandled routes 
 app.all("*" , (req,res,next)=>{

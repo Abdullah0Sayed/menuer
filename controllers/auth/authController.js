@@ -27,7 +27,12 @@ exports.signup = asyncHandler(
 
 exports.login = asyncHandler(
     async (req , res , next) => {
-          
+        
+        // Validation 
+        if(!req.body.email || !req.body.password) {
+            return next(new ErrorApi(`Email and password are missing try again` , 400));
+        }
+
         const doc = await userSignUpModel.findOne({email: req.body.email})
 
         if(!doc || !(await bcrypt.compare(req.body.password , doc.password))) {

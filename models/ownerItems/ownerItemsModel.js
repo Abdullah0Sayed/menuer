@@ -32,7 +32,18 @@ const ownerItemsMongooseSchema = new mongoose.Schema({
         required: true
     }
 
-} , {timestamps: true});
+} , {timestamps: true , toJSON: {virtuals: true} , toObject: {virtuals: true}});
+
+// virtual populate
+
+ownerItemsMongooseSchema.virtual('reviews' , {
+    ref: 'Review',
+    foreignField: 'item_id',
+    localField: 'item_id'
+
+});
+
+
 
 // owner items model 
 const ownerItemsModel = mongoose.model('ownerItems' , ownerItemsMongooseSchema);

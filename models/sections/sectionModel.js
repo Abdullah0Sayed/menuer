@@ -13,7 +13,7 @@ const sectionSchema = new mongoose.Schema({
     section_items: [
         {
             type: mongoose.Schema.ObjectId,
-            ref: 'Items',
+            ref: 'ownerItems',
         },
     ],
     business_id: {

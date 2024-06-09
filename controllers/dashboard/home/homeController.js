@@ -11,11 +11,11 @@ const ErrorApi = require("../../../utils/Errors/errorAPI");
 exports.getBusinessData = asyncHandler(
     async (req,res,next)=> {
         // get user id from protected route
-        let id;
+        let id = (req.staffInfo) ? req.staffInfo._id : req.user._id;
         let business_id;
         let business;
 
-        console.log(id);
+        
 
         if(req.staffInfo) {
             business_id = req.staffInfo.business_id;
@@ -23,28 +23,16 @@ exports.getBusinessData = asyncHandler(
             
         }
         else {
-            id = req.user._id
+            business_id = req.business._id;
             business = await businessModel.findOne({user_id: id});
         }
         
+        console.log(`user ID : ${id}`);
         if(!business) {
             return next(new ErrorApi(`No Business Created To This User - Create Business Now` , 404));
         }
 
-        const sections = await sectionsModel.find({business_id}).select('section_name').sort('section_name')
-
-
-         const items = await ownerItemsModel.find({
-            section_id: { $exists: true, $in: sections }
-          });
-          
-       
-
-        if(!sections || sections.length == 0) {
-            console.log(`No Sections Created`);
-        }
-        
-        res.status(200).json({business , sections , items , status: 'success'})
+        res.status(200).json({business , status: 'success'})
     }
 )
 
@@ -72,7 +60,7 @@ exports.getItemsOfSection = asyncHandler(
         filterObject = { ...filterObject, ...queryObject };
 
 
-        let mongooseQuery = ownerItemsModel.find(filterObject);
+        let mongooseQuery = ownerItemsModel.find(filterObject).populate({path:'item_id' , select: 'item_image'});
          //  3- sorting sort('price -item_name')
          if(req.query.sort) {
             const sortBy = req.query.sort.split(",").join(" ");

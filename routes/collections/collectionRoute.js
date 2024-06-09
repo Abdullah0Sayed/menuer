@@ -1,5 +1,5 @@
 // import collection Controller 
-const { createCollection , getCollection , getCollections  , updateCollection , deleteCollection , getCollectionsOfCategory} = require("../../controllers/collections/collectionController");
+const { createCollection , getCollection , getCollections  , updateCollection , deleteCollection , getCollectionsOfCategory , getCollectionsOfCategoryBasedOnUserLogged} = require("../../controllers/collections/collectionController");
 // import collection validators 
 const { createCollectionValidator , getCollectionValidator , getCollectionsOfCategoryValidator , updatedCollectionValidator , deleteCollectionValidator} = require("../../utils/validator/collectionValidator");
 // import express to use router 
@@ -16,5 +16,7 @@ router.route('/collections/:id').get(authenticatedRoute,allowedTo("stuff","owner
 router.route("/collections").get(authenticatedRoute,allowedTo("stuff","owner"),getCollections)
 // get all collection of category by category ID
 router.route("/category/:id/collections").get(authenticatedRoute,allowedTo("stuff","owner"),getCollectionsOfCategoryValidator , getCollectionsOfCategory)
+// get all collection of category by category ID
+router.route("/user-business/collections").get(authenticatedRoute,allowedTo("stuff","owner"), getCollectionsOfCategoryBasedOnUserLogged)
 // export router of categories 
 module.exports = router;

@@ -50,6 +50,7 @@ exports.resizeUploadBusinessImages = asyncHandler(
     
                 await sharp(req.files.business_cover[0].buffer).resize(1110,260).toFormat("png").png({quality: 95}).toFile(`uploads/business/covers/${cover_file_name}`);
                 req.body.business_cover = cover_file_name
+                console.log('Business Cover is Updated');
             }
     
             if(req.files.business_logo) {
@@ -57,10 +58,11 @@ exports.resizeUploadBusinessImages = asyncHandler(
     
                 await sharp(req.files.business_logo[0].buffer).resize(500,500).toFormat("png").png({quality: 95}).toFile(`uploads/business/logos/${logo_file_name}`);
                 req.body.business_logo = logo_file_name
-                next();
+                console.log('Business Logo is Updated');
+               
                
             }
-    
+           
         }
         next();
         
@@ -72,12 +74,12 @@ exports.getBusinessGeneralDetails = asyncHandler(
     async (req,res,next)=>{
         const user_id = req.user._id;
         console.log(user_id);
-        const business = await businessModel.find({user_id}).select('business_name business_slogan business_logo business_cover');
+        const business = await businessModel.findOne({user_id}).select('business_name business_slogan business_logo business_cover');
         if(!business) {
             return next(new ErrorApi(`No Business Created To This User - Create Business Now`));
         }
          // fetch business id after get business model 
-        const business_id = business[0]._id;
+        const business_id = business._id
         res.status(200).json({business})
 
     }
@@ -85,14 +87,29 @@ exports.getBusinessGeneralDetails = asyncHandler(
 
 exports.updateGeneralBusinessDetails = asyncHandler(
     async (req,res,next)=>{
-        const user_id = req.user._id;
-        console.log(user_id);
-        const business = await businessModel.find({user_id})
-        if(!business) {
-            return next(new ErrorApi(`No Business Created To This User - Create Business Now`));
+        const id = (req.staffInfo)? req.staffInfo._id: req.user._id;
+        let business_id;
+        let business
+        
+
+        if(req.staffInfo) {
+            staff = await staffModel.findById(id);
+            business_id = staff.business_id;
+            business = await businessModel.findById(business_id);
+            console.log(business);
         }
-        const business_id = business[0]._id;    
-        console.log(business_id);
+        else {
+            business_id = req.business._id
+            business = await businessModel.findById(business_id);
+            console.log(business);
+         }
+        
+        if(!business) {
+            return next(new ErrorApi(`No Business Created To This User - Create Business Now` , 404));
+        }
+        console.log(`userID:  ${id}`);
+        console.log(`businessID:  ${business_id}`);
+
         const update_business_general_details_object = {
             business_name: req.body.business_name || business.business_name,
             business_slogan: req.body.business_slogan || business.business_slogan,
@@ -100,11 +117,11 @@ exports.updateGeneralBusinessDetails = asyncHandler(
             business_cover: req.body.business_cover
         }
         const new_business = await businessModel.findByIdAndUpdate({_id: business_id} , update_business_general_details_object , {new: true})
-       
+        console.log(new_business);
          // fetch business id after get business model 
         
        
-        res.status(200).json({new_business})
+        res.status(200).json({data: new_business})
 
     }
 )
@@ -113,12 +130,12 @@ exports.getBusinessContactDetails = asyncHandler(
     async (req,res,next)=>{
         const user_id = req.user._id;
         console.log(user_id);
-        const business = await businessModel.find({user_id}).select('business_address business_mobile business_social_media');
+        const business = await businessModel.findOne({user_id}).select('business_address business_mobile business_social_media');
         if(!business) {
             return next(new ErrorApi(`No Business Created To This User - Create Business Now`));
         }
          // fetch business id after get business model 
-        const business_id = business[0]._id;
+        const business_id = business._id;
         res.status(200).json({business})
 
     }
@@ -137,11 +154,11 @@ exports.updateContactBusinessDetails = asyncHandler(
             const business_id = business[0]._id;
 
        
-        const new_business = await businessModel.findById(business_id);
+        const new_business = await businessModel.findByIdAndUpdate({_id: business_id} , {$addToSet: {business_address: req.body.business_address , business_mobile: req.body.business_mobil}});
 
-        new_business.business_address.push(req.body.business_address);
-        new_business.business_mobile.push(req.body.business_mobile);
-        new_business.business_social_media.push(req.body.business_social_media);
+        // new_business.business_address.push(req.body.business_address);
+        // new_business.business_mobile.push(req.body.business_mobile);
+        new_business.business_social_media = req.body.business_social_media;
         await new_business.save();
          // fetch business id after get business model 
         
@@ -178,7 +195,7 @@ exports.addNewStaffMember = asyncHandler(
         const new_staff = await staffModel.create(newStaffMemberObject);
         user.role = 'stuff';
         await user.save()
-        res.status(201).json({data: new_staff , status: 'success' ,msg: 'user not found'})
+        res.status(201).json({data: new_staff , status: 'success'})
     }
 )
 
@@ -252,6 +269,8 @@ exports.getReceiptSetting = asyncHandler(
         res.status(200).json({receipt});
     }
 )
+
+
 exports.setReceiptSetting = asyncHandler(
     async (req,res,next)=>{
         // get business ID 
@@ -262,5 +281,29 @@ exports.setReceiptSetting = asyncHandler(
         const receipt = await receiptModel.create(req.body);
 
         res.status(201).json({receipt});
+    }
+)
+
+exports.updateReceiptSetting = asyncHandler(
+    async (req,res,next)=>{
+        // get business ID 
+        const business_id = req.business._id;
+        console.log(business_id);
+        // check if business has receipt setting
+       
+        const receipt = await receiptModel.findOne({business_id: business_id});
+        if(!receipt) {
+            return next(new ErrorApi(`no receipt founded in database for your business` , 404))
+        }
+
+        receipt.minimum_charge=  req.body.minimum_charge || receipt.minimum_charge,
+        receipt.service =  req.body.service || receipt.service,
+        receipt.vats =  req.body.vats || receipt.vats,
+        receipt.taxes =  req.body.taxes || receipt.taxes,
+        receipt.business_id =  business_id;
+        await receipt.save();
+
+
+        res.status(200).json({receipt});
     }
 )

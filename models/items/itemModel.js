@@ -22,6 +22,12 @@ const itemSchema = new mongoose.Schema({
         lowercase: true,
         trim: true
     },
+    ratingAverage: {
+        type: Number
+    },
+    ratingQuantity: {
+        type: Number
+    },
     item_keywords: {
         type: [String],
         lowercase: true,

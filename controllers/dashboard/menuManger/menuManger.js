@@ -149,10 +149,12 @@ exports.addMenuSectionAndItems = asyncHandler(
                 business_id: business_id
             }
             const new_owner_item = await ownerItemsModel.create(owner_item_object);
+            
             const secDoc = await sectionsModel.findById(owner_item_object.section_id);
             secDoc.section_items.push(owner_item_object.item_id)
             await secDoc.save();
-            res.status(200).json({new_owner_item , section: secDoc})
+            
+            res.status(201).json({new_owner_item , section: secDoc})
         }
 
     }
@@ -160,14 +162,15 @@ exports.addMenuSectionAndItems = asyncHandler(
 
 exports.getMenuItem = asyncHandler(
     async (req,res,next)=>{
-        const item_id = req.params.id;
+       
 
-        const item = await ownerItemsModel.find({item_id: item_id}).populate({path: 'item_id' , select: 'item_image'}).populate({path: 'section_id' , select: 'section_name'});
+        const item = await ownerItemsModel.findOne({_id: req.params.id}).populate({path: 'item_id' , select: 'item_image ratingAverage ratingQuantity'});
 
         if(!item){
-            return next(new ErrorApi(`No Data Exist in database for this item ${item_id}` , 404));
-        }
-        const reviews = await reviewModel.find({item_id: item_id}).populate({path: 'user_id' , select: 'first_name last_name'}).select('-item_id');
+            return next(new ErrorApi(`No Data Exist in database for this item ${req.params.id}` , 404));
+        }  
+        const item_id = item.item_id;
+        const reviews = await reviewModel.find({item_id: item_id}).populate({path: 'client_id' , select: 'first_name last_name'}).select('-item_id');
 
         res.status(200).json({item , reviews})
 
@@ -197,7 +200,7 @@ exports.getItemOfSections = asyncHandler(
         filterObject = { ...filterObject, ...queryObject };
 
 
-        let mongooseQuery = ownerItemsModel.find({section_id: section_id});
+        let mongooseQuery = ownerItemsModel.find({section_id: section_id}).populate('reviews');
 
         if(req.query.sort) {
             const sortBy = req.query.sort.split(",").join(" ");
