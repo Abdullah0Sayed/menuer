@@ -1,12 +1,13 @@
 // import express 
 const express = require("express");
 // import Home Controller 
-const { getBusinessGeneralDetails , getBusinessContactDetails , updateGeneralBusinessDetails , updateContactBusinessDetails , uploadBusinessImages , resizeUploadBusinessImages , addNewStaffMember , getStaffMembers , getReceiptSetting ,  setReceiptSetting , updateReceiptSetting} = require("../../../controllers/dashboard/businessManger/businessManger");
+const { getBusinessGeneralDetails , getBusinessContactDetails , updateGeneralBusinessDetails , updateContactBusinessDetails , uploadBusinessImages , resizeUploadBusinessImages , addNewStaffMember , getStaffMembers , getReceiptSetting ,  setReceiptSetting , updateReceiptSetting , getQrCodeOfBusiness} = require("../../../controllers/dashboard/businessManger/businessManger");
 // import authProtected
 const {authenticatedRoute , allowedTo , allowedPages} = require("../../../controllers/auth/authController")
 // router
 const router = express.Router();
 
+router.route('/menuer/business/dashboard/businessManger/qrCode/get-qrcode').get(authenticatedRoute,allowedTo("stuff","owner"),allowedPages(5),getQrCodeOfBusiness);
 router.route('/menuer/business/dashboard/businessManger/general-details').get(authenticatedRoute,allowedTo("stuff","owner"),allowedPages(5),getBusinessGeneralDetails);
 router.route('/menuer/business/dashboard/businessManger/contact-details').get(authenticatedRoute,allowedTo("stuff","owner"),allowedPages(5),getBusinessContactDetails);
 router.route('/menuer/business/dashboard/businessManger/general-details').put(authenticatedRoute,allowedTo("stuff","owner"),allowedPages(5),uploadBusinessImages , resizeUploadBusinessImages , updateGeneralBusinessDetails);

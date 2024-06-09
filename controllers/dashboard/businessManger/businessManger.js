@@ -9,6 +9,8 @@ const staffModel = require("../../../models/staff/staffModel");
 const receiptModel = require("../../../models/receipt/receiptModel");
 // import sectionModel 
 const sectionsModel = require("../../../models/sections/sectionModel");
+// import qrCodeModle 
+const qrCodeModel = require("../../../models/qrCodes/qrcodeModel");
 // import Error Api 
 const ErrorApi = require("../../../utils/Errors/errorAPI");
 
@@ -305,5 +307,22 @@ exports.updateReceiptSetting = asyncHandler(
 
 
         res.status(200).json({receipt});
+    }
+)
+
+exports.getQrCodeOfBusiness = asyncHandler(
+    async(req,res,next)=>{
+        // get business id 
+        const business_id = req.business._id;
+        console.log(business_id);
+        // get qrCode Based On Business ID
+        const qrCode = await qrCodeModel.findOne({business_id: business_id});
+
+        if(!qrCode) {
+            return next(new ErrorApi(`no qrCode Founded in database for your business` , 404))
+        }
+
+        res.status(200).json({data:qrCode , status: 'successfully'})
+
     }
 )

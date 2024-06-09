@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const itemModel = require("../items/itemModel");
 // create modelSchema
 const reviewSchema = new mongoose.Schema({
-    comment: {
+    review: {
         type: String,
     },
     ratings: {
